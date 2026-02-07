@@ -111,7 +111,7 @@ export default async function MyShiftsPage({ searchParams }: MyShiftsPageProps) 
             <div
               className="matrix-header"
               style={{
-                gridTemplateColumns: `160px repeat(${roleTypes.length}, minmax(220px, 1fr))`,
+                gridTemplateColumns: `60px repeat(${roleTypes.length}, minmax(135px, 1fr))`,
               }}
             >
               <div>Day</div>
@@ -121,24 +121,28 @@ export default async function MyShiftsPage({ searchParams }: MyShiftsPageProps) 
             </div>
             {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
               const date = addDays(week.startDate, dayIndex);
-              const label = `${new Intl.DateTimeFormat("en-US", {
+              const weekDay = new Intl.DateTimeFormat("en-US", {
                 timeZone: "America/Vancouver",
                 weekday: "short",
-              }).format(date)} - ${new Intl.DateTimeFormat("en-US", {
+              }).format(date);
+              const dateLabel = new Intl.DateTimeFormat("en-US", {
                 timeZone: "America/Vancouver",
                 month: "short",
                 day: "numeric",
-              }).format(date)}`;
+              }).format(date);
 
               return (
                 <div
                   key={`row-${dayIndex}`}
                   className="matrix-row"
                   style={{
-                    gridTemplateColumns: `160px repeat(${roleTypes.length}, minmax(220px, 1fr))`,
+                    gridTemplateColumns: `60px repeat(${roleTypes.length}, minmax(135px, 1fr))`,
                   }}
                 >
-                  <div className="matrix-day">{label}</div>
+                  <div className="matrix-day">
+                    <span className="day-week">{weekDay}</span>
+                    <span className="day-date">{dateLabel}</span>
+                  </div>
                   {roleTypes.map((role: Slot["roleType"]) => {
                     const daySlots = slots.filter((slot: Slot) => {
                       const slotDay = new Date(slot.date).getDay();
