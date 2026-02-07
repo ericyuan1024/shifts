@@ -27,7 +27,7 @@ export default async function AdminSchedulePage({
   const selectedStart = resolvedSearchParams?.week;
   const weekKey = (d: Date) => formatDateInTimeZone(d, "America/Vancouver");
   const week =
-    weeks.find((w) => weekKey(w.startDate) === selectedStart) ??
+    weeks.find((w: (typeof weeks)[number]) => weekKey(w.startDate) === selectedStart) ??
     weeks[0];
   if (!week) {
     return (
