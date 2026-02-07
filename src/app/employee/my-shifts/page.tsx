@@ -115,7 +115,7 @@ export default async function MyShiftsPage({ searchParams }: MyShiftsPageProps) 
               }}
             >
               <div>Day</div>
-              {roleTypes.map((role) => (
+              {roleTypes.map((role: Slot["roleType"]) => (
                 <div key={role.id}>{role.name}</div>
               ))}
             </div>

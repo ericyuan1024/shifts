@@ -151,7 +151,8 @@ export default async function PreferencesPage({ searchParams }: PreferencesPageP
                     day: "numeric",
                   }).format(dayDate)}`;
 
-                  const daySlots = slots.filter((slot) => {
+                  type Slot = (typeof slots)[number];
+                  const daySlots = slots.filter((slot: Slot) => {
                     const slotDay = new Date(slot.date).getDay();
                     const mondayIndex = (slotDay + 6) % 7;
                     return mondayIndex === dayIndex;
@@ -169,7 +170,7 @@ export default async function PreferencesPage({ searchParams }: PreferencesPageP
                   return (
                     <div key={`day-${dayIndex}`} className="day-section">
                       <div className="day-header">{label}</div>
-                      {daySlots.map((slot) => {
+                      {daySlots.map((slot: Slot) => {
                         const choice = prefMap.get(slot.id) ?? "CAN";
                         const locked = slot.week.schedule?.status === "FINALIZED";
                         const choiceClass = `choice-pill choice-${choice.toLowerCase()}`;

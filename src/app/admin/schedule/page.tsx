@@ -175,11 +175,12 @@ export default async function AdminSchedulePage({
                       return (
                         <div key={role.id} className="matrix-cell">
                         {daySlots.map((slot: Slot) => {
+                          type Employee = (typeof employees)[number];
                           const availableEmployees = employees.filter(
-                            (e) =>
+                            (e: Employee) =>
                               e.roleTypeId === slot.roleTypeId ||
-                                e.roleType?.name === "Manager"
-                            );
+                              e.roleType?.name === "Manager"
+                          );
 
                             return (
                               <form
@@ -200,11 +201,13 @@ export default async function AdminSchedulePage({
                                     <option value="" disabled>
                                       Select employee
                                     </option>
-                                    {availableEmployees.map((employee) => (
+                                    {availableEmployees.map(
+                                      (employee: Employee) => (
                                       <option key={employee.id} value={employee.id}>
                                         {employee.name}
                                       </option>
-                                    ))}
+                                      )
+                                    )}
                                   </select>
                                   <button type="submit" className="ghost-button">
                                     Save
