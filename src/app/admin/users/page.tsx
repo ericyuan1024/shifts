@@ -6,6 +6,8 @@ import { ensureDefaultRoleTypes } from "@/lib/roles";
 import TopBar from "@/components/TopBar";
 import EditUserModal from "./EditUserModal";
 
+export const dynamic = "force-dynamic";
+
 export default async function UsersPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/admin/login");

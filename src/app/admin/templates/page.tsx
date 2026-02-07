@@ -7,6 +7,8 @@ import TopBar from "@/components/TopBar";
 import EditShiftTemplateModal from "./EditShiftTemplateModal";
 import DeleteShiftTemplateModal from "./DeleteShiftTemplateModal";
 
+export const dynamic = "force-dynamic";
+
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export default async function TemplatesPage() {
