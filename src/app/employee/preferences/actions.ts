@@ -4,8 +4,9 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { ensureNextTwoWeeks } from "@/lib/weeks";
-import { mondayIndex } from "@/lib/date";
+import { formatDateInTimeZone, mondayIndex } from "@/lib/date";
 import { PreferenceChoice } from "@prisma/client";
+import { redirect } from "next/navigation";
 
 export async function updatePreferenceAction(formData: FormData) {
   const user = await getCurrentUser();
@@ -101,5 +102,6 @@ export async function syncFromTemplateAction(formData: FormData) {
   }
 
   revalidatePath("/employee/preferences");
-  return;
+  const weekParam = formatDateInTimeZone(week.startDate, "America/Vancouver");
+  redirect(`/employee/preferences?week=${weekParam}`);
 }
