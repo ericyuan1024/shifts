@@ -57,17 +57,15 @@ export default async function AdminSchedulePage({
     }),
   ]);
 
+  type Slot = (typeof slots)[number];
   const roleTypes = Array.from(
     new Map(
-      slots.map((slot: (typeof slots)[number]) => [
-        slot.roleTypeId,
-        slot.roleType,
-      ])
+      slots.map((slot: Slot) => [slot.roleTypeId, slot.roleType])
     ).values()
   );
 
   const hoursByEmployee = new Map<string, { id: string; name: string; hours: number }>();
-  slots.forEach((slot) => {
+  slots.forEach((slot: Slot) => {
     if (!slot.assignment?.user) return;
     const existing = hoursByEmployee.get(slot.assignment.user.id) ?? {
       id: slot.assignment.user.id,
