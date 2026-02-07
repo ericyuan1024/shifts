@@ -1,0 +1,11 @@
+shifts.kongfucat.ca {
+  encode zstd gzip
+
+  @static {
+    file
+    path /_next/* /favicon.ico /robots.txt /sitemap.xml
+  }
+
+  reverse_proxy /_next/* app:3000
+  reverse_proxy / app:3000
+}

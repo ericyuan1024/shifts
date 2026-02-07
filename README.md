@@ -52,6 +52,33 @@ http://localhost:3000/bootstrap
 - Employee sign-in: `/login`
 - Admin sign-in: `/admin/login`
 
+## VPS Deployment (Docker + Caddy)
+
+### Prereqs
+- Ubuntu 22.04 VPS
+- Docker + Docker Compose
+- DNS A record for `shifts.kongfucat.ca` pointing to your VPS IP
+
+### Steps
+1. Copy the repo to your server (git clone or rsync).
+2. Create `deploy/.env`:
+```
+POSTGRES_PASSWORD=your_strong_password
+```
+3. Run the deploy script:
+```
+./deploy/deploy.sh
+```
+4. Open:
+```
+https://shifts.kongfucat.ca
+```
+
+If no admin exists, visit:
+```
+https://shifts.kongfucat.ca/bootstrap
+```
+
 ## Recommended Flow
 1. Admin creates shift templates
 2. Admin creates employees and assigns roles
