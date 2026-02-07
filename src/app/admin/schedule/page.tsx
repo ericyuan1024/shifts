@@ -58,7 +58,12 @@ export default async function AdminSchedulePage({
   ]);
 
   const roleTypes = Array.from(
-    new Map(slots.map((slot) => [slot.roleTypeId, slot.roleType])).values()
+    new Map(
+      slots.map((slot: (typeof slots)[number]) => [
+        slot.roleTypeId,
+        slot.roleType,
+      ])
+    ).values()
   );
 
   const hoursByEmployee = new Map<string, { id: string; name: string; hours: number }>();
