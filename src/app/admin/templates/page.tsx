@@ -20,6 +20,7 @@ export default async function TemplatesPage() {
     include: { roleType: true },
     orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
   });
+  type ShiftTemplate = (typeof templates)[number];
 
   return (
     <>
@@ -63,7 +64,7 @@ export default async function TemplatesPage() {
           <p className="subtext">No templates yet.</p>
         ) : (
           <div className="schedule-list">
-            {templates.map((template) => (
+            {templates.map((template: ShiftTemplate) => (
               <div className="schedule-row" key={template.id}>
                 <div>
                   <strong>{template.roleType.name}</strong>

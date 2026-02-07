@@ -73,9 +73,10 @@ export async function syncFromTemplateAction(formData: FormData) {
   const templates = await prisma.availabilityTemplate.findMany({
     where: { userId: user.id },
   });
+  type Template = (typeof templates)[number];
 
   const templateMap = new Map(
-    templates.map((t) => [
+    templates.map((t: Template) => [
       `${t.roleTypeId}-${t.dayOfWeek}-${t.startTime}-${t.endTime}`,
       t.choice,
     ])
@@ -85,7 +86,8 @@ export async function syncFromTemplateAction(formData: FormData) {
     where: { userId: user.id, shiftSlotId: { in: slots.map((s) => s.id) } },
   });
 
-  const payload = slots.map((slot) => {
+  type Slot = (typeof slots)[number];
+  const payload = slots.map((slot: Slot) => {
     const day = mondayIndex(slot.date);
     const start = slot.startAt.toTimeString().slice(0, 5);
     const end = slot.endAt.toTimeString().slice(0, 5);

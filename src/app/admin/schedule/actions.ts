@@ -48,13 +48,14 @@ export async function generateScheduleAction(
       schedule.version
     );
 
-    await prisma.assignment.createMany({
-      data: assignments.map((a) => ({
-        ...a,
-        scheduleId: schedule!.id,
-        source: "AUTO",
-      })),
-    });
+  type AssignmentRow = (typeof assignments)[number];
+  await prisma.assignment.createMany({
+    data: assignments.map((a: AssignmentRow) => ({
+      ...a,
+      scheduleId: schedule!.id,
+      source: "AUTO",
+    })),
+  });
 
     await prisma.schedule.update({
       where: { id: schedule.id },

@@ -39,13 +39,15 @@ export default async function TemplatePage() {
     include: { roleType: true },
     orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
   });
+  type ShiftTemplate = (typeof shiftTemplates)[number];
 
   const templates = await prisma.availabilityTemplate.findMany({
     where: { userId: user.id },
   });
+  type Template = (typeof templates)[number];
 
   const templateMap = new Map(
-    templates.map((t) => [
+    templates.map((t: Template) => [
       `${t.roleTypeId}-${t.dayOfWeek}-${t.startTime}-${t.endTime}`,
       t,
     ])
@@ -53,12 +55,14 @@ export default async function TemplatePage() {
 
   const validKeys = new Set(
     shiftTemplates.map(
-      (t) => `${t.roleTypeId}-${t.dayOfWeek}-${t.startTime}-${t.endTime}`
+      (t: ShiftTemplate) =>
+        `${t.roleTypeId}-${t.dayOfWeek}-${t.startTime}-${t.endTime}`
     )
   );
 
   const obsoleteTemplates = templates.filter(
-    (t) => !validKeys.has(`${t.roleTypeId}-${t.dayOfWeek}-${t.startTime}-${t.endTime}`)
+    (t: Template) =>
+      !validKeys.has(`${t.roleTypeId}-${t.dayOfWeek}-${t.startTime}-${t.endTime}`)
   );
 
   return (
@@ -82,7 +86,7 @@ export default async function TemplatePage() {
           </section>
         ) : (
           <section className="schedule-list">
-            {shiftTemplates.map((slot) => {
+            {shiftTemplates.map((slot: ShiftTemplate) => {
               const key = `${slot.roleTypeId}-${slot.dayOfWeek}-${slot.startTime}-${slot.endTime}`;
               const existing = templateMap.get(key);
               const choice = existing?.choice ?? "CAN";
@@ -133,7 +137,7 @@ export default async function TemplatePage() {
               These entries no longer match current shift templates. You can delete them.
             </p>
             <div className="schedule-list">
-              {obsoleteTemplates.map((t) => (
+              {obsoleteTemplates.map((t: Template) => (
                 <form key={t.id} action={deleteTemplateAction} className="schedule-row">
                   <input type="hidden" name="id" value={t.id} />
                   <div>

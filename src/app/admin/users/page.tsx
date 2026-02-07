@@ -19,6 +19,8 @@ export default async function UsersPage() {
       orderBy: { name: "asc" },
     }),
   ]);
+  type RoleType = (typeof roleTypes)[number];
+  type UserRow = (typeof users)[number];
 
   return (
     <>
@@ -42,7 +44,7 @@ export default async function UsersPage() {
             <option value="" disabled>
               Select role
             </option>
-            {roleTypes.map((role) => (
+            {roleTypes.map((role: RoleType) => (
               <option key={role.id} value={role.id}>
                 {role.name}
               </option>
@@ -66,7 +68,7 @@ export default async function UsersPage() {
           <p className="subtext">No users yet.</p>
         ) : (
           <div className="schedule-list">
-            {users.map((u) => (
+            {users.map((u: UserRow) => (
               <div className="schedule-row" key={u.id}>
                 <div>
                   <strong>{u.name}</strong>

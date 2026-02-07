@@ -38,7 +38,7 @@ export default function PreviewHours({ items }: Props) {
               <p className="subtext">No assignments yet.</p>
             ) : (
               <div className="modal-list">
-                {items.map((item) => (
+                {items.map((item: EmployeeHours) => (
                   <div key={item.id} className="modal-row">
                     <strong>{item.name}</strong>
                     <span>{item.hours.toFixed(2)} hrs</span>

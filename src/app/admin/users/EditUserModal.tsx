@@ -52,7 +52,7 @@ export default function EditUserModal({ user, roleTypes }: Props) {
                 Role Type
                 <select name="roleTypeId" defaultValue={user.roleTypeId ?? ""}>
                   <option value="">None</option>
-                  {roleTypes.map((role) => (
+                  {roleTypes.map((role: RoleType) => (
                     <option key={role.id} value={role.id}>
                       {role.name}
                     </option>

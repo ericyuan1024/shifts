@@ -36,7 +36,7 @@ export default function AddShiftSlotForm({ roleTypes, days }: Props) {
         <option value="" disabled>
           Select role
         </option>
-        {roleTypes.map((role) => (
+        {roleTypes.map((role: RoleType) => (
           <option key={role.id} value={role.id}>
             {role.name}
           </option>
