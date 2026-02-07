@@ -161,12 +161,12 @@ export default async function AdminSchedulePage({
                     }}
                   >
                     <div className="matrix-day">{label}</div>
-                    {roleTypes.map((role) => {
-                      const daySlots = slots.filter((slot) => {
-                        const slotDay = new Date(slot.date).getDay();
-                        const mondayIndex = (slotDay + 6) % 7;
-                        return mondayIndex === dayIndex && slot.roleTypeId === role.id;
-                      });
+                  {roleTypes.map((role: Slot["roleType"]) => {
+                    const daySlots = slots.filter((slot: Slot) => {
+                      const slotDay = new Date(slot.date).getDay();
+                      const mondayIndex = (slotDay + 6) % 7;
+                      return mondayIndex === dayIndex && slot.roleTypeId === role.id;
+                    });
 
                       if (daySlots.length === 0) {
                         return <div key={role.id} className="matrix-cell empty">—</div>;
@@ -174,10 +174,10 @@ export default async function AdminSchedulePage({
 
                       return (
                         <div key={role.id} className="matrix-cell">
-                          {daySlots.map((slot) => {
-                            const availableEmployees = employees.filter(
-                              (e) =>
-                                e.roleTypeId === slot.roleTypeId ||
+                        {daySlots.map((slot: Slot) => {
+                          const availableEmployees = employees.filter(
+                            (e) =>
+                              e.roleTypeId === slot.roleTypeId ||
                                 e.roleType?.name === "Manager"
                             );
 

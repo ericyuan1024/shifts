@@ -139,8 +139,8 @@ export default async function MyShiftsPage({ searchParams }: MyShiftsPageProps) 
                   }}
                 >
                   <div className="matrix-day">{label}</div>
-                  {roleTypes.map((role) => {
-                    const daySlots = slots.filter((slot) => {
+                  {roleTypes.map((role: Slot["roleType"]) => {
+                    const daySlots = slots.filter((slot: Slot) => {
                       const slotDay = new Date(slot.date).getDay();
                       const mondayIndex = (slotDay + 6) % 7;
                       return mondayIndex === dayIndex && slot.roleTypeId === role.id;
@@ -156,7 +156,7 @@ export default async function MyShiftsPage({ searchParams }: MyShiftsPageProps) 
 
                     return (
                       <div key={role.id} className="matrix-cell">
-                        {daySlots.map((slot) => {
+                        {daySlots.map((slot: Slot) => {
                           const assignedUser = slot.assignment?.user;
                           const isSelf = assignedUser?.id === user.id;
                           return (
