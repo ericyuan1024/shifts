@@ -16,14 +16,14 @@ export async function upsertTemplateAction(formData: FormData) {
   const hours = Number(formData.get("hours"));
   const choice = String(formData.get("choice") || "");
 
-  if (!roleTypeId) return { ok: false, message: "Missing role." };
-  if (!/^[0-6]$/.test(String(dayOfWeek))) return { ok: false, message: "Invalid day." };
+  if (!roleTypeId) return;
+  if (!/^[0-6]$/.test(String(dayOfWeek))) return;
   if (!/^\d{2}:\d{2}$/.test(startTime) || !/^\d{2}:\d{2}$/.test(endTime)) {
-    return { ok: false, message: "Invalid time." };
+    return;
   }
-  if (!hours || hours <= 0) return { ok: false, message: "Invalid hours." };
+  if (!hours || hours <= 0) return;
   if (!["WANT", "CAN", "CANT"].includes(choice)) {
-    return { ok: false, message: "Invalid choice." };
+    return;
   }
 
   await prisma.availabilityTemplate.upsert({
@@ -52,7 +52,7 @@ export async function upsertTemplateAction(formData: FormData) {
   });
 
   revalidatePath("/employee/template");
-  return { ok: true };
+  return;
 }
 
 export async function deleteTemplateAction(formData: FormData) {
@@ -60,12 +60,12 @@ export async function deleteTemplateAction(formData: FormData) {
   if (!user) throw new Error("UNAUTHORIZED");
 
   const id = String(formData.get("id") || "");
-  if (!id) return { ok: false, message: "Missing template id." };
+  if (!id) return;
 
   await prisma.availabilityTemplate.deleteMany({
     where: { id, userId: user.id },
   });
 
   revalidatePath("/employee/template");
-  return { ok: true };
+  return;
 }

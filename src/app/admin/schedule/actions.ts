@@ -155,13 +155,17 @@ export async function updateAssignmentAction(formData: FormData) {
   const shiftSlotId = String(formData.get("shiftSlotId") || "");
   const userId = String(formData.get("userId") || "");
 
-  if (!shiftSlotId || !userId) return { ok: false, message: "缺少参数" };
+  if (!shiftSlotId || !userId) {
+    throw new Error("Missing params.");
+  }
 
   const slot = await prisma.shiftSlot.findUnique({
     where: { id: shiftSlotId },
     include: { week: { include: { schedule: true } } },
   });
-  if (!slot) return { ok: false, message: "Shift slot not found." };
+  if (!slot) {
+    throw new Error("Shift slot not found.");
+  }
 
   let schedule = slot.week.schedule;
   if (!schedule) {
@@ -171,7 +175,7 @@ export async function updateAssignmentAction(formData: FormData) {
   }
 
   if (schedule.status === "FINALIZED") {
-    return { ok: false, message: "Finalized schedules cannot be edited." };
+    throw new Error("Finalized schedules cannot be edited.");
   }
 
   await prisma.assignment.upsert({
@@ -187,5 +191,5 @@ export async function updateAssignmentAction(formData: FormData) {
 
   revalidatePath("/admin/schedule");
   revalidatePath("/employee/my-shifts");
-  return { ok: true };
+  return;
 }

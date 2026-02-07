@@ -9,7 +9,7 @@ export async function createRoleTypeAction(formData: FormData) {
   if (!user || user.role !== "ADMIN") throw new Error("UNAUTHORIZED");
 
   const name = String(formData.get("name") || "").trim();
-  if (!name) return { ok: false, message: "Please enter a role name." };
+  if (!name) return;
 
   await prisma.roleType.create({ data: { name } });
   revalidatePath("/admin/templates");
@@ -26,19 +26,19 @@ export async function createTemplateAction(formData: FormData) {
   const endTime = String(formData.get("endTime") || "");
   const hours = Number(formData.get("hours"));
 
-  if (!roleTypeId) return { ok: false, message: "Please select a role." };
-  if (!/^[0-6]$/.test(String(dayOfWeek))) return { ok: false, message: "Please select a weekday." };
+  if (!roleTypeId) return;
+  if (!/^[0-6]$/.test(String(dayOfWeek))) return;
   if (!/^\d{2}:\d{2}$/.test(startTime) || !/^\d{2}:\d{2}$/.test(endTime)) {
-    return { ok: false, message: "Please enter a valid time." };
+    return;
   }
-  if (!hours || hours <= 0) return { ok: false, message: "Please enter hours." };
+  if (!hours || hours <= 0) return;
 
   await prisma.shiftTemplate.create({
     data: { roleTypeId, dayOfWeek, startTime, endTime, hours },
   });
 
   revalidatePath("/admin/templates");
-  return { ok: true };
+  return;
 }
 
 export async function updateShiftTemplateAction(formData: FormData) {
@@ -51,12 +51,12 @@ export async function updateShiftTemplateAction(formData: FormData) {
   const endTime = String(formData.get("endTime") || "");
   const hours = Number(formData.get("hours"));
 
-  if (!id) return { ok: false, message: "Missing template id." };
-  if (!/^[0-6]$/.test(String(dayOfWeek))) return { ok: false, message: "Invalid day." };
+  if (!id) return;
+  if (!/^[0-6]$/.test(String(dayOfWeek))) return;
   if (!/^\d{2}:\d{2}$/.test(startTime) || !/^\d{2}:\d{2}$/.test(endTime)) {
-    return { ok: false, message: "Invalid time." };
+    return;
   }
-  if (!hours || hours <= 0) return { ok: false, message: "Invalid hours." };
+  if (!hours || hours <= 0) return;
 
   await prisma.shiftTemplate.update({
     where: { id },
@@ -64,7 +64,7 @@ export async function updateShiftTemplateAction(formData: FormData) {
   });
 
   revalidatePath("/admin/templates");
-  return { ok: true };
+  return;
 }
 
 export async function deleteShiftTemplateAction(formData: FormData) {
@@ -72,10 +72,10 @@ export async function deleteShiftTemplateAction(formData: FormData) {
   if (!user || user.role !== "ADMIN") throw new Error("UNAUTHORIZED");
 
   const id = String(formData.get("id") || "");
-  if (!id) return { ok: false, message: "Missing template id." };
+  if (!id) return;
 
   await prisma.shiftTemplate.delete({ where: { id } });
 
   revalidatePath("/admin/templates");
-  return { ok: true };
+  return;
 }

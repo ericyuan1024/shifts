@@ -14,19 +14,19 @@ export async function updatePreferenceAction(formData: FormData) {
   const shiftSlotId = String(formData.get("shiftSlotId") || "");
   const choice = String(formData.get("choice") || "");
 
-  if (!shiftSlotId) return { ok: false, message: "Missing shift slot." };
+  if (!shiftSlotId) return;
   if (!["WANT", "CAN", "CANT"].includes(choice)) {
-    return { ok: false, message: "Invalid choice." };
+    return;
   }
 
   const slot = await prisma.shiftSlot.findUnique({
     where: { id: shiftSlotId },
     include: { week: { include: { schedule: true } } },
   });
-  if (!slot) return { ok: false, message: "Shift slot not found." };
+  if (!slot) return;
 
   if (slot.week.schedule?.status === "FINALIZED") {
-    return { ok: false, message: "Schedule finalized. Availability is locked." };
+    return;
   }
 
   const castChoice = choice as PreferenceChoice;
@@ -37,7 +37,7 @@ export async function updatePreferenceAction(formData: FormData) {
   });
 
   revalidatePath("/employee/preferences");
-  return { ok: true };
+  return;
 }
 
 export async function syncFromTemplateAction(formData: FormData) {
@@ -45,20 +45,20 @@ export async function syncFromTemplateAction(formData: FormData) {
   if (!user) throw new Error("UNAUTHORIZED");
 
   if (!user.roleTypeId) {
-    return { ok: false, message: "Ask an admin to assign your role first." };
+    return;
   }
 
   const weekId = String(formData.get("weekId") || "");
-  if (!weekId) return { ok: false, message: "Missing week." };
+  if (!weekId) return;
 
   const week = await prisma.week.findUnique({
     where: { id: weekId },
     include: { schedule: true },
   });
 
-  if (!week) return { ok: false, message: "Week not found." };
+  if (!week) return;
   if (week.schedule?.status === "FINALIZED") {
-    return { ok: false, message: "Week is finalized." };
+    return;
   }
 
   const isManager = user.roleType?.name === "Manager";
@@ -99,5 +99,5 @@ export async function syncFromTemplateAction(formData: FormData) {
   }
 
   revalidatePath("/employee/preferences");
-  return { ok: true };
+  return;
 }

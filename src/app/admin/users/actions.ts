@@ -13,9 +13,9 @@ export async function createUserAction(formData: FormData) {
   const roleTypeId = String(formData.get("roleTypeId") || "");
   const weight = Number(formData.get("weight") || 1);
 
-  if (!name) return { ok: false, message: "Please enter a name." };
-  if (!/^[0-9]{4}$/.test(passcode)) return { ok: false, message: "Passcode must be 4 digits." };
-  if (!roleTypeId) return { ok: false, message: "Please select a role." };
+  if (!name) return;
+  if (!/^[0-9]{4}$/.test(passcode)) return;
+  if (!roleTypeId) return;
 
   const passcodeHash = hashPasscode(passcode);
 
@@ -29,11 +29,11 @@ export async function createUserAction(formData: FormData) {
       },
     });
   } catch (error) {
-    return { ok: false, message: "Passcode is already in use." };
+    return;
   }
 
   revalidatePath("/admin/users");
-  return { ok: true };
+  return;
 }
 
 export async function createAdminAction(formData: FormData) {
@@ -43,8 +43,8 @@ export async function createAdminAction(formData: FormData) {
   const name = String(formData.get("name") || "").trim();
   const passcode = String(formData.get("passcode") || "").trim();
 
-  if (!name) return { ok: false, message: "Please enter a name." };
-  if (!/^[0-9]{4}$/.test(passcode)) return { ok: false, message: "Passcode must be 4 digits." };
+  if (!name) return;
+  if (!/^[0-9]{4}$/.test(passcode)) return;
 
   const passcodeHash = hashPasscode(passcode);
 
@@ -57,11 +57,11 @@ export async function createAdminAction(formData: FormData) {
       },
     });
   } catch (error) {
-    return { ok: false, message: "Passcode is already in use." };
+    return;
   }
 
   revalidatePath("/admin/users");
-  return { ok: true };
+  return;
 }
 
 export async function updateUserAction(formData: FormData) {
@@ -75,26 +75,26 @@ export async function updateUserAction(formData: FormData) {
   const weightRaw = String(formData.get("weight") || "").trim();
   const passcode = String(formData.get("passcode") || "").trim();
 
-  if (!userId) return { ok: false, message: "Missing user." };
-  if (!name) return { ok: false, message: "Please enter a name." };
+  if (!userId) return;
+  if (!name) return;
   if (!["EMPLOYEE", "ADMIN"].includes(role)) {
-    return { ok: false, message: "Invalid role." };
+    return;
   }
 
   const weight = Number(weightRaw);
   if (!Number.isFinite(weight) || weight <= 0) {
-    return { ok: false, message: "Weight must be a positive number." };
+    return;
   }
 
   let passcodeHash: string | undefined;
   if (passcode) {
     if (!/^[0-9]{4}$/.test(passcode)) {
-      return { ok: false, message: "Passcode must be 4 digits." };
+      return;
     }
     passcodeHash = hashPasscode(passcode);
     const conflict = await prisma.user.findUnique({ where: { passcodeHash } });
     if (conflict && conflict.id !== userId) {
-      return { ok: false, message: "Passcode is already in use." };
+      return;
     }
   }
 
@@ -110,5 +110,5 @@ export async function updateUserAction(formData: FormData) {
   });
 
   revalidatePath("/admin/users");
-  return { ok: true };
+  return;
 }
