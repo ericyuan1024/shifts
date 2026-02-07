@@ -49,12 +49,13 @@ export default async function PreferencesPage({ searchParams }: PreferencesPageP
   const selectedStart = resolvedSearchParams?.week;
 
   const weeksAll = await ensureNextThreeWeeks();
+  type Week = (typeof weeksAll)[number];
   const weeks = weeksAll.slice(1, 3);
-  await Promise.all(weeks.map((w) => ensureSlotsForWeek(w.id)));
+  await Promise.all(weeks.map((w: Week) => ensureSlotsForWeek(w.id)));
 
   const weekKey = (d: Date) => formatDateInTimeZone(d, "America/Vancouver");
   const week =
-    weeks.find((w) => weekKey(w.startDate) === selectedStart) ?? weeks[0];
+    weeks.find((w: Week) => weekKey(w.startDate) === selectedStart) ?? weeks[0];
 
   const slots = await prisma.shiftSlot.findMany({
     where: {
@@ -89,7 +90,7 @@ export default async function PreferencesPage({ searchParams }: PreferencesPageP
           <WeekSelector
             path="/employee/preferences"
             value={weekKey(week.startDate)}
-            options={weeks.map((w) => {
+            options={weeks.map((w: Week) => {
               const start = w.startDate;
               const end = addDays(start, 6);
               const label = `${new Intl.DateTimeFormat("en-US", {

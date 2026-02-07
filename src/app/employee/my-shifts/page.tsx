@@ -20,9 +20,10 @@ export default async function MyShiftsPage({ searchParams }: MyShiftsPageProps) 
   const selectedStart = resolvedSearchParams?.week;
 
   const weeks = await ensureNextThreeWeeks();
+  type Week = (typeof weeks)[number];
   const weekKey = (d: Date) => formatDateInTimeZone(d, "America/Vancouver");
   const week =
-    weeks.find((w) => weekKey(w.startDate) === selectedStart) ?? weeks[0];
+    weeks.find((w: Week) => weekKey(w.startDate) === selectedStart) ?? weeks[0];
 
   if (!week) {
     return (
@@ -52,9 +53,14 @@ export default async function MyShiftsPage({ searchParams }: MyShiftsPageProps) 
     orderBy: [{ date: "asc" }, { startAt: "asc" }],
   });
 
-  const roleTypes = Array.from(
-    new Map(slots.map((slot) => [slot.roleTypeId, slot.roleType])).values()
-  );
+  type Slot = (typeof slots)[number];
+  const roleTypeMap = new Map<string, Slot["roleType"]>();
+  slots.forEach((slot: Slot) => {
+    if (!roleTypeMap.has(slot.roleTypeId)) {
+      roleTypeMap.set(slot.roleTypeId, slot.roleType);
+    }
+  });
+  const roleTypes = Array.from(roleTypeMap.values());
 
   const isFinalized = week.schedule?.status === "FINALIZED";
 
@@ -78,7 +84,7 @@ export default async function MyShiftsPage({ searchParams }: MyShiftsPageProps) 
           <WeekSelector
             path="/employee/my-shifts"
             value={weekKey(week.startDate)}
-            options={weeks.map((w) => {
+            options={weeks.map((w: Week) => {
               const start = w.startDate;
               const end = addDays(start, 6);
               const label = `${new Intl.DateTimeFormat("en-US", {
