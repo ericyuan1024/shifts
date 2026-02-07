@@ -24,10 +24,11 @@ export default async function AdminSchedulePage({
   if (user.role !== "ADMIN") redirect("/home");
 
   const weeks = await ensureNextThreeWeeks();
+  type Week = (typeof weeks)[number];
   const selectedStart = resolvedSearchParams?.week;
   const weekKey = (d: Date) => formatDateInTimeZone(d, "America/Vancouver");
   const week =
-    weeks.find((w: (typeof weeks)[number]) => weekKey(w.startDate) === selectedStart) ??
+    weeks.find((w: Week) => weekKey(w.startDate) === selectedStart) ??
     weeks[0];
   if (!week) {
     return (
@@ -101,7 +102,7 @@ export default async function AdminSchedulePage({
           <WeekSelector
             path="/admin/schedule"
             value={weekKey(week.startDate)}
-            options={weeks.map((w) => {
+            options={weeks.map((w: Week) => {
               const start = w.startDate;
               const end = addDays(start, 6);
               const label = `${new Intl.DateTimeFormat("en-US", {
