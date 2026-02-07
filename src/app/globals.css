@@ -40,13 +40,13 @@ input {
 .page {
   max-width: 980px;
   margin: 0 auto;
-  padding: 32px 20px 60px;
+  padding: 20px 0 40px;
 }
 
 .page-with-topbar {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 20px 20px 60px;
+  padding: 12px 0 40px;
 }
 
 .topbar {
@@ -54,8 +54,8 @@ input {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 20px;
-  margin: 20px auto 10px;
+  padding: 10px 6px;
+  margin: 8px auto 6px;
   max-width: 1100px;
   border-radius: calc(var(--radius) + 4px);
   background: var(--card);
@@ -256,6 +256,21 @@ input {
   color: var(--ink);
 }
 
+.icon-button {
+  height: 38px;
+  width: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: white;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.icon-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .schedule-list {
   display: grid;
   gap: 12px;
@@ -267,7 +282,7 @@ input {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 12px 14px;
+  padding: 10px 10px;
   border: 1px solid var(--stroke);
   border-radius: 12px;
   background: #fffdf9;
@@ -295,16 +310,25 @@ input {
   background: white;
 }
 
+.matrix-slot .row-actions {
+  flex-wrap: wrap;
+}
+
+.matrix-slot .row-actions select {
+  width: 100%;
+  min-width: 0;
+}
+
 .week-grid {
   display: grid;
-  gap: 18px;
+  gap: 12px;
 }
 
 .week-card {
   background: var(--card);
   border: 1px solid var(--stroke);
   border-radius: var(--radius);
-  padding: 18px;
+  padding: 12px;
 }
 
 .week-card h2 {
@@ -321,7 +345,7 @@ input {
 
 .week-table {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
 .week-header,
@@ -362,7 +386,7 @@ input {
 }
 
 .week-row {
-  padding: 10px 8px;
+  padding: 8px 6px;
   border-radius: 12px;
   border: 1px solid var(--stroke);
   background: #fffdf9;
@@ -402,18 +426,38 @@ input {
 
 .matrix-day {
   font-weight: 700;
-  padding: 10px 12px;
+  padding: 4px 4px;
   border-radius: 12px;
   background: #f4efe7;
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  text-align: center;
+  min-width: 48px;
+}
+
+.matrix-day span {
+  display: block;
+}
+
+.day-week {
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.day-date {
+  font-size: 11px;
+  color: var(--muted);
 }
 
 .matrix-cell {
   display: grid;
-  gap: 10px;
-  padding: 10px;
+  gap: 8px;
+  padding: 8px;
   border-radius: 12px;
   border: 1px solid var(--stroke);
   background: #fffdf9;
+  min-width: 0;
 }
 
 .matrix-cell.empty {
@@ -425,11 +469,12 @@ input {
 
 .matrix-slot {
   display: grid;
-  gap: 8px;
-  padding: 10px;
+  gap: 6px;
+  padding: 8px;
   border-radius: 10px;
   border: 1px dashed var(--stroke);
   background: white;
+  min-width: 0;
 }
 
 .matrix-slot.self {

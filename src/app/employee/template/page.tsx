@@ -122,7 +122,9 @@ export default async function TemplatePage() {
                         </option>
                       ))}
                     </select>
-                    <button type="submit" className="ghost-button">Save</button>
+                    <button type="submit" className="icon-button" aria-label="Save">
+                      ✓
+                    </button>
                   </div>
                 </form>
               );

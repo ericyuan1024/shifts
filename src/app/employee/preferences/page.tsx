@@ -202,8 +202,13 @@ export default async function PreferencesPage({ searchParams }: PreferencesPageP
                               </select>
                             </div>
                             <div>
-                              <button type="submit" className="ghost-button" disabled={locked}>
-                                {locked ? "Locked" : "Save"}
+                              <button
+                                type="submit"
+                                className="icon-button"
+                                disabled={locked}
+                                aria-label="Save"
+                              >
+                                {locked ? "—" : "✓"}
                               </button>
                             </div>
                           </form>

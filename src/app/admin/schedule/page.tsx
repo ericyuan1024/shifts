@@ -135,7 +135,7 @@ export default async function AdminSchedulePage({
               <div
                 className="matrix-header"
                 style={{
-                  gridTemplateColumns: `160px repeat(${roleTypes.length}, minmax(220px, 1fr))`,
+                  gridTemplateColumns: `60px repeat(${roleTypes.length}, minmax(135px, 1fr))`,
                 }}
               >
                 <div>Day</div>
@@ -145,22 +145,26 @@ export default async function AdminSchedulePage({
               </div>
               {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
                 const date = addDays(week.startDate, dayIndex);
-                const label = `${date.toLocaleDateString(undefined, {
+                const weekDay = date.toLocaleDateString(undefined, {
                   weekday: "short",
-                })} - ${date.toLocaleDateString(undefined, {
+                });
+                const dateLabel = date.toLocaleDateString(undefined, {
                   month: "short",
                   day: "numeric",
-                })}`;
+                });
 
                 return (
                   <div
                     key={`row-${dayIndex}`}
                     className="matrix-row"
                     style={{
-                      gridTemplateColumns: `160px repeat(${roleTypes.length}, minmax(220px, 1fr))`,
+                      gridTemplateColumns: `60px repeat(${roleTypes.length}, minmax(135px, 1fr))`,
                     }}
                   >
-                    <div className="matrix-day">{label}</div>
+                    <div className="matrix-day">
+                      <span className="day-week">{weekDay}</span>
+                      <span className="day-date">{dateLabel}</span>
+                    </div>
                   {roleTypes.map((role: Slot["roleType"]) => {
                     const daySlots = slots.filter((slot: Slot) => {
                       const slotDay = new Date(slot.date).getDay();
@@ -209,10 +213,10 @@ export default async function AdminSchedulePage({
                                       )
                                     )}
                                   </select>
-                                  <button type="submit" className="ghost-button">
-                                    Save
-                                  </button>
-                                </div>
+                                    <button type="submit" className="icon-button" aria-label="Save">
+                                      ✓
+                                    </button>
+                                  </div>
                                 <div className="badge">
                                   {slot.assignment?.user.name ?? "Unassigned"}
                                 </div>
