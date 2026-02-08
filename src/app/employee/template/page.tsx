@@ -2,12 +2,18 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import TopBar from "@/components/TopBar";
+import AutoSubmitSelect from "@/components/AutoSubmitSelect";
 import { upsertTemplateAction, deleteTemplateAction } from "./actions";
 
 const choiceLabels: Record<string, string> = {
   WANT: "Want",
   CAN: "Can",
   CANT: "Can't",
+};
+
+const formatHours = (hours: number) => {
+  const rounded = Math.round(hours * 100) / 100;
+  return Number.isInteger(rounded) ? `${rounded}` : `${parseFloat(rounded.toFixed(2))}`;
 };
 
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -95,7 +101,8 @@ export default async function TemplatePage() {
                 <form
                   key={slot.id}
                   action={upsertTemplateAction}
-                  className={`schedule-row row-${choice.toLowerCase()}`}
+                  className={`schedule-row row-${choice.toLowerCase()} template-slot`}
+                  id={`tmpl-${slot.id}`}
                 >
                   <input type="hidden" name="roleTypeId" value={slot.roleTypeId} />
                   <input type="hidden" name="dayOfWeek" value={slot.dayOfWeek} />
@@ -103,28 +110,24 @@ export default async function TemplatePage() {
                   <input type="hidden" name="endTime" value={slot.endTime} />
                   <input type="hidden" name="hours" value={slot.hours} />
 
-                  <div>
-                    <strong>{slot.roleType.name}</strong>
-                    <div className="subtext">
+                  <div className="slot-top">
+                    <div className="slot-time">
                       {days[slot.dayOfWeek]} | {slot.startTime} - {slot.endTime}
                     </div>
-                  </div>
-                  <div className="row-actions">
-                    <select
+                    <AutoSubmitSelect
                       key={`${slot.id}-${choice}`}
+                      formId={`tmpl-${slot.id}`}
                       name="choice"
                       defaultValue={choice}
                       className={`choice-pill choice-${choice.toLowerCase()}`}
-                    >
-                      {Object.entries(choiceLabels).map(([value, label]) => (
-                        <option key={value} value={value}>
-                          {label}
-                        </option>
-                      ))}
-                    </select>
-                    <button type="submit" className="icon-button" aria-label="Save">
-                      ✓
-                    </button>
+                      options={Object.entries(choiceLabels).map(([value, label]) => ({
+                        value,
+                        label,
+                      }))}
+                    />
+                  </div>
+                  <div className="slot-role">
+                    {slot.roleType.name} - {formatHours(slot.hours)} hours
                   </div>
                 </form>
               );

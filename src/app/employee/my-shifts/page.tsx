@@ -130,11 +130,12 @@ export default async function MyShiftsPage({ searchParams }: MyShiftsPageProps) 
                 month: "short",
                 day: "numeric",
               }).format(date);
+              const rowClass = dayIndex % 2 === 0 ? "matrix-alt-a" : "matrix-alt-b";
 
               return (
                 <div
                   key={`row-${dayIndex}`}
-                  className="matrix-row"
+                  className={`matrix-row ${rowClass}`}
                   style={{
                     gridTemplateColumns: `60px repeat(${roleTypes.length}, minmax(135px, 1fr))`,
                   }}

@@ -6,11 +6,17 @@ import { addDays, formatDateInTimeZone } from "@/lib/date";
 import { syncFromTemplateAction, updatePreferenceAction } from "./actions";
 import TopBar from "@/components/TopBar";
 import WeekSelector from "@/components/WeekSelector";
+import AutoSubmitSelect from "@/components/AutoSubmitSelect";
 
 const choiceLabels: Record<string, string> = {
   WANT: "Want",
   CAN: "Can",
   CANT: "Can't",
+};
+
+const formatHours = (hours: number) => {
+  const rounded = Math.round(hours * 100) / 100;
+  return Number.isInteger(rounded) ? `${rounded}` : `${parseFloat(rounded.toFixed(2))}`;
 };
 
 type PreferencesPageProps = {
@@ -158,9 +164,11 @@ export default async function PreferencesPage({ searchParams }: PreferencesPageP
                     return mondayIndex === dayIndex;
                   });
 
+                  const dayClass = dayIndex % 2 === 0 ? "day-alt-a" : "day-alt-b";
+
                   if (daySlots.length === 0) {
                     return (
-                      <div key={`day-${dayIndex}`} className="day-section">
+                      <div key={`day-${dayIndex}`} className={`day-section ${dayClass}`}>
                         <div className="day-header">{label}</div>
                         <div className="day-empty">No shifts</div>
                       </div>
@@ -168,48 +176,44 @@ export default async function PreferencesPage({ searchParams }: PreferencesPageP
                   }
 
                   return (
-                    <div key={`day-${dayIndex}`} className="day-section">
+                    <div key={`day-${dayIndex}`} className={`day-section ${dayClass}`}>
                       <div className="day-header">{label}</div>
                       {daySlots.map((slot: Slot) => {
                         const choice = prefMap.get(slot.id) ?? "CAN";
                         const locked = slot.week.schedule?.status === "FINALIZED";
                         const choiceClass = `choice-pill choice-${choice.toLowerCase()}`;
+                        const hours =
+                          slot.hours ??
+                          (slot.endAt.getTime() - slot.startAt.getTime()) / (1000 * 60 * 60);
 
                         return (
                           <form
                             key={slot.id}
                             action={updatePreferenceAction}
-                            className={`week-row row-${choice.toLowerCase()}`}
+                            className={`week-row row-${choice.toLowerCase()} template-slot`}
+                            id={`pref-${slot.id}`}
                           >
                             <input type="hidden" name="shiftSlotId" value={slot.id} />
-                            <div>{slot.roleType.name}</div>
-                            <div>
-                              {slot.startAt.toTimeString().slice(0, 5)} -{" "}
-                              {slot.endAt.toTimeString().slice(0, 5)}
-                            </div>
-                            <div>
-                              <select
+                            <div className="slot-top">
+                              <div className="slot-time">
+                                {slot.startAt.toTimeString().slice(0, 5)} -{" "}
+                                {slot.endAt.toTimeString().slice(0, 5)}
+                              </div>
+                              <AutoSubmitSelect
+                                key={`${slot.id}-${choice}`}
+                                formId={`pref-${slot.id}`}
                                 name="choice"
                                 defaultValue={choice}
                                 disabled={locked}
                                 className={choiceClass}
-                              >
-                                {Object.entries(choiceLabels).map(([value, label]) => (
-                                  <option key={value} value={value}>
-                                    {label}
-                                  </option>
-                                ))}
-                              </select>
+                                options={Object.entries(choiceLabels).map(([value, label]) => ({
+                                  value,
+                                  label,
+                                }))}
+                              />
                             </div>
-                            <div>
-                              <button
-                                type="submit"
-                                className="icon-button"
-                                disabled={locked}
-                                aria-label="Save"
-                              >
-                                {locked ? "—" : "✓"}
-                              </button>
+                            <div className="slot-role">
+                              {slot.roleType.name} - {formatHours(hours)} hours
                             </div>
                           </form>
                         );

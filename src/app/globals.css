@@ -319,6 +319,65 @@ input {
   min-width: 0;
 }
 
+.row-actions select {
+  width: 100%;
+}
+
+.slot-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.slot-top .choice-pill {
+  margin-left: auto;
+}
+
+.template-slot {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.user-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.user-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+
+.user-edit-button {
+  margin-left: auto;
+}
+
+.template-slot .slot-top {
+  width: 100%;
+}
+
+.template-slot .choice-pill {
+  margin-left: auto;
+}
+
+.template-slot .slot-role {
+  width: 100%;
+}
+
+.slot-time {
+  font-weight: 700;
+}
+
+.slot-role {
+  font-size: 13px;
+  color: var(--muted);
+}
+
 .week-grid {
   display: grid;
   gap: 12px;
@@ -371,6 +430,18 @@ input {
   border-bottom: 1px dashed var(--stroke);
 }
 
+.day-alt-a {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 8px 8px 4px;
+}
+
+.day-alt-b {
+  background: #f8f3ec;
+  border-radius: 12px;
+  padding: 8px 8px 4px;
+}
+
 .day-header {
   font-weight: 700;
   color: var(--ink);
@@ -391,6 +462,7 @@ input {
   border: 1px solid var(--stroke);
   background: #fffdf9;
 }
+
 
 .row-want {
   background: #ecfdf3;
@@ -415,6 +487,16 @@ input {
   display: grid;
   gap: 12px;
   align-items: start;
+}
+
+.matrix-alt-a .matrix-cell,
+.matrix-alt-a .matrix-day {
+  background: #ffffff;
+}
+
+.matrix-alt-b .matrix-cell,
+.matrix-alt-b .matrix-day {
+  background: #f8f3ec;
 }
 
 .matrix-header {
@@ -478,8 +560,14 @@ input {
 }
 
 .matrix-slot.self {
-  border-color: #16a34a;
-  background: #ecfdf3;
+  border-color: #15803d;
+  background: linear-gradient(180deg, #ecfdf3 0%, #dcfce7 100%);
+  box-shadow: 0 10px 24px -18px rgba(21, 128, 61, 0.6);
+  border-width: 2px;
+}
+
+.matrix-slot.self .badge {
+  background: #14532d;
 }
 
 .matrix-time {
