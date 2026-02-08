@@ -93,13 +93,14 @@ export async function generateScheduleAssignments(
   debugLog.push(
     `[scheduler] week=${weekId} slots=${slotsInput.length} users=${users.length}`
   );
+  let bestAssignments: { shiftSlotId: string; userId: string }[] = [];
+  let bestCount = -1;
   for (let attempt = 0; attempt < attempts; attempt += 1) {
     const rand = mulberry32(seed + attempt * 101);
     const assignedHours = new Map<string, number>();
     const assignedDays = new Map<string, Set<string>>();
     const assignments: { shiftSlotId: string; userId: string }[] = [];
 
-    let failed = false;
     for (const slot of sortedSlots) {
       const candidates = (candidatesBySlot.get(slot.id) || []).filter(
         (candidate) => {
@@ -122,8 +123,7 @@ export async function generateScheduleAssignments(
         debugLog.push(
           `[scheduler] attempt=${attempt} slot=${slot.id} role=${slot.roleTypeId} date=${slotDay} hours=${slot.hours} candidates=0`
         );
-        failed = true;
-        break;
+        continue;
       }
 
       candidates.sort((a, b) => {
@@ -144,14 +144,22 @@ export async function generateScheduleAssignments(
       assignedDays.set(choice.userId, days);
     }
 
-    if (!failed) {
+    if (assignments.length === slotsInput.length) {
       console.log(
         `[scheduler] success attempt=${attempt} assignments=${assignments.length}`
       );
       return assignments;
     }
+
+    if (assignments.length > bestCount) {
+      bestAssignments = assignments;
+      bestCount = assignments.length;
+    }
   }
 
   console.log(debugLog.join("\n"));
-  throw new Error("No feasible schedule. Check templates or availability.");
+  console.log(
+    `[scheduler] partial assignments=${bestCount} of ${slotsInput.length}`
+  );
+  return bestAssignments;
 }
