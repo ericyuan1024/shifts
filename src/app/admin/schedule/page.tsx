@@ -42,7 +42,7 @@ export default async function AdminSchedulePage({
 
   await ensureSlotsForWeek(week.id);
 
-  const [schedule, slots, employees] = await Promise.all([
+  const [schedule, slots, employees, preferences] = await Promise.all([
     prisma.schedule.findUnique({ where: { weekId: week.id } }),
     prisma.shiftSlot.findMany({
       where: { weekId: week.id },
@@ -56,6 +56,10 @@ export default async function AdminSchedulePage({
       where: { role: "EMPLOYEE" },
       include: { roleType: true },
       orderBy: { name: "asc" },
+    }),
+    prisma.preference.findMany({
+      where: { shiftSlot: { weekId: week.id } },
+      select: { userId: true, shiftSlotId: true, choice: true },
     }),
   ]);
 
@@ -82,6 +86,12 @@ export default async function AdminSchedulePage({
   const hoursPreview = Array.from(hoursByEmployee.values()).sort(
     (a, b) => b.hours - a.hours
   );
+  const preferenceMap = new Map(
+    preferences.map((p) => [`${p.userId}-${p.shiftSlotId}`, p.choice])
+  );
+  const choiceDot = (choice: string) => (choice === "CANT" ? "🔴" : "🟢");
+  const choiceLabel = (choice: string) =>
+    choice === "WANT" ? "Want" : choice === "CANT" ? "Can't" : "Can";
 
   return (
     <>
@@ -208,10 +218,13 @@ export default async function AdminSchedulePage({
                                     defaultValue={slot.assignment?.userId ?? ""}
                                     options={[
                                       { value: "", label: "Select employee" },
-                                      ...availableEmployees.map((employee: Employee) => ({
-                                        value: employee.id,
-                                        label: employee.name,
-                                      })),
+                                      ...availableEmployees.map((employee: Employee) => {
+                                        const pref =
+                                          preferenceMap.get(`${employee.id}-${slot.id}`) ??
+                                          "CAN";
+                                        const label = `${choiceDot(pref)} ${employee.name} (${choiceLabel(pref)})`;
+                                        return { value: employee.id, label };
+                                      }),
                                     ]}
                                   />
                                 </div>
