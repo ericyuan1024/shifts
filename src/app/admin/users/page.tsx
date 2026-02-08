@@ -71,14 +71,9 @@ export default async function UsersPage() {
         ) : (
           <div className="schedule-list">
             {users.map((u: UserRow) => (
-              <div className="schedule-row" key={u.id}>
-                <div>
+              <div className="schedule-row user-row" key={u.id}>
+                <div className="user-row-header">
                   <strong>{u.name}</strong>
-                  <div className="subtext">
-                    {u.role === "ADMIN" ? "Admin" : u.roleType?.name ?? "No role"}
-                  </div>
-                </div>
-                <div className="row-actions">
                   <EditUserModal
                     user={{
                       id: u.id,
@@ -90,7 +85,10 @@ export default async function UsersPage() {
                     roleTypes={roleTypes}
                   />
                 </div>
-                <div className="badge">Weight {u.weight}</div>
+                <div className="subtext">
+                  {u.role === "ADMIN" ? "Admin" : u.roleType?.name ?? "No role"}
+                </div>
+                <div>Weight: {u.weight}</div>
               </div>
             ))}
           </div>

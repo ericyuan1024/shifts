@@ -23,7 +23,11 @@ export default function EditUserModal({ user, roleTypes }: Props) {
 
   return (
     <>
-      <button className="ghost-button" type="button" onClick={() => setOpen(true)}>
+      <button
+        className="ghost-button user-edit-button"
+        type="button"
+        onClick={() => setOpen(true)}
+      >
         Edit
       </button>
       {open ? (

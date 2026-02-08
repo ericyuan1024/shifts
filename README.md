@@ -79,6 +79,13 @@ If no admin exists, visit:
 https://shifts.kongfucat.ca/bootstrap
 ```
 
+### Update after code changes
+On the VPS:
+```
+cd /opt/shifts/deploy
+./update.sh
+```
+
 ## Recommended Flow
 1. Admin creates shift templates
 2. Admin creates employees and assigns roles

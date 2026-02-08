@@ -8,6 +8,7 @@ import { updateAssignmentAction } from "./actions";
 import TopBar from "@/components/TopBar";
 import PreviewHours from "./PreviewHours";
 import WeekSelector from "@/components/WeekSelector";
+import AutoSubmitSelect from "@/components/AutoSubmitSelect";
 
 type AdminSchedulePageProps = {
   searchParams?: Promise<{ week?: string }>;
@@ -152,11 +153,12 @@ export default async function AdminSchedulePage({
                   month: "short",
                   day: "numeric",
                 });
+                const rowClass = dayIndex % 2 === 0 ? "matrix-alt-a" : "matrix-alt-b";
 
                 return (
                   <div
                     key={`row-${dayIndex}`}
-                    className="matrix-row"
+                    className={`matrix-row ${rowClass}`}
                     style={{
                       gridTemplateColumns: `60px repeat(${roleTypes.length}, minmax(135px, 1fr))`,
                     }}
@@ -191,6 +193,7 @@ export default async function AdminSchedulePage({
                                 key={slot.id}
                                 action={updateAssignmentAction}
                                 className="matrix-slot"
+                                id={`assign-${slot.id}`}
                               >
                                 <input type="hidden" name="shiftSlotId" value={slot.id} />
                                 <div className="matrix-time">
@@ -198,27 +201,19 @@ export default async function AdminSchedulePage({
                                   {slot.endAt.toTimeString().slice(0, 5)}
                                 </div>
                                 <div className="row-actions">
-                                  <select
+                                  <AutoSubmitSelect
+                                    key={`${slot.id}-${slot.assignment?.userId ?? ""}`}
+                                    formId={`assign-${slot.id}`}
                                     name="userId"
                                     defaultValue={slot.assignment?.userId ?? ""}
-                                  >
-                                    <option value="" disabled>
-                                      Select employee
-                                    </option>
-                                    {availableEmployees.map(
-                                      (employee: Employee) => (
-                                      <option key={employee.id} value={employee.id}>
-                                        {employee.name}
-                                      </option>
-                                      )
-                                    )}
-                                  </select>
-                                    <button type="submit" className="icon-button" aria-label="Save">
-                                      ✓
-                                    </button>
-                                  </div>
-                                <div className="badge">
-                                  {slot.assignment?.user.name ?? "Unassigned"}
+                                    options={[
+                                      { value: "", label: "Select employee" },
+                                      ...availableEmployees.map((employee: Employee) => ({
+                                        value: employee.id,
+                                        label: employee.name,
+                                      })),
+                                    ]}
+                                  />
                                 </div>
                               </form>
                             );
