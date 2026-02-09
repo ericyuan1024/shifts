@@ -93,7 +93,7 @@ export async function syncFromTemplateAction(formData: FormData) {
     const start = slot.startAt.toTimeString().slice(0, 5);
     const end = slot.endAt.toTimeString().slice(0, 5);
     const key = `${slot.roleTypeId}-${day}-${start}-${end}`;
-    const choice = templateMap.get(key) ?? "CAN";
+    const choice = templateMap.get(key) ?? "CANT";
     return { userId: user.id, shiftSlotId: slot.id, choice: choice as PreferenceChoice };
   });
 

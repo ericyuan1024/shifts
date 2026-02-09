@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { PreferenceChoice } from "@prisma/client";
+import { mondayIndex } from "@/lib/date";
 
 const BASE_SCORE: Record<PreferenceChoice, number> = {
   WANT: 3,
@@ -28,36 +29,64 @@ type SlotInput = {
   hours: number;
   roleTypeId: string;
   date: Date;
+  startAt: Date;
+  endAt: Date;
 };
 
 export async function generateScheduleAssignments(
   weekId: string,
   seed: number
 ) {
-  const [slots, users, preferences] = await Promise.all([
+  const users = await prisma.user.findMany({
+    where: { role: "EMPLOYEE" },
+    select: {
+      id: true,
+      weight: true,
+      maxHoursWeek: true,
+      roleTypeId: true,
+      roleType: { select: { name: true } },
+    },
+  });
+
+  const [slots, preferences, templates] = await Promise.all([
     prisma.shiftSlot.findMany({
       where: { weekId },
-      select: { id: true, hours: true, roleTypeId: true, date: true },
-    }),
-    prisma.user.findMany({
-      where: { role: "EMPLOYEE" },
       select: {
         id: true,
-        weight: true,
-        maxHoursWeek: true,
+        hours: true,
         roleTypeId: true,
-        roleType: { select: { name: true } },
+        date: true,
+        startAt: true,
+        endAt: true,
       },
     }),
     prisma.preference.findMany({
       where: { shiftSlot: { weekId } },
       select: { userId: true, shiftSlotId: true, choice: true },
     }),
+    prisma.availabilityTemplate.findMany({
+      where: { userId: { in: users.map((u) => u.id) } },
+      select: {
+        userId: true,
+        roleTypeId: true,
+        dayOfWeek: true,
+        startTime: true,
+        endTime: true,
+        choice: true,
+      },
+    }),
   ]);
 
   const preferenceMap = new Map<string, PreferenceChoice>();
   for (const pref of preferences) {
     preferenceMap.set(`${pref.userId}-${pref.shiftSlotId}`, pref.choice);
+  }
+  const templateMap = new Map<string, PreferenceChoice>();
+  for (const template of templates) {
+    templateMap.set(
+      `${template.userId}-${template.roleTypeId}-${template.dayOfWeek}-${template.startTime}-${template.endTime}`,
+      template.choice
+    );
   }
 
   const slotsInput: SlotInput[] = slots;
@@ -69,8 +98,15 @@ export async function generateScheduleAssignments(
     for (const user of users) {
       const isManager = user.roleType?.name === "Manager";
       if (!isManager && user.roleTypeId !== slot.roleTypeId) continue;
+      const day = mondayIndex(slot.date);
+      const start = slot.startAt.toTimeString().slice(0, 5);
+      const end = slot.endAt.toTimeString().slice(0, 5);
       const pref =
-        preferenceMap.get(`${user.id}-${slot.id}`) ?? "CAN";
+        preferenceMap.get(`${user.id}-${slot.id}`) ??
+        templateMap.get(
+          `${user.id}-${slot.roleTypeId}-${day}-${start}-${end}`
+        ) ??
+        "CANT";
       if (pref === "CANT") continue;
       candidates.push({
         userId: user.id,
@@ -104,11 +140,12 @@ export async function generateScheduleAssignments(
     for (const slot of sortedSlots) {
       const candidates = (candidatesBySlot.get(slot.id) || []).filter(
         (candidate) => {
-          const currentHours = assignedHours.get(candidate.userId) || 0;
-          if (currentHours + slot.hours > candidate.maxHoursWeek) return false;
-
           const user = userMap.get(candidate.userId);
           const isManager = user?.roleType?.name === "Manager";
+          const currentHours = assignedHours.get(candidate.userId) || 0;
+          if (!isManager && currentHours + slot.hours > candidate.maxHoursWeek) {
+            return false;
+          }
           if (isManager) return true;
 
           const dayKey = slot.date.toISOString().slice(0, 10);
