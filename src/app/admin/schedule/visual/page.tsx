@@ -112,13 +112,20 @@ export default async function VisualSchedulePage({ searchParams }: VisualPagePro
     return "none";
   };
 
+  const dayStartMinutes = 10 * 60;
+  const dayEndMinutes = 24 * 60;
   const getBarStyle = (slot: Slot) => {
-    const startMinutes = slot.startAt.getHours() * 60 + slot.startAt.getMinutes();
-    const lengthMinutes = Math.round(slot.hours * 60);
-    let endMinutes = startMinutes + lengthMinutes;
-    if (endMinutes > 1440) endMinutes = 1440;
-    const left = (startMinutes / 1440) * 100;
-    const width = Math.max(2, ((endMinutes - startMinutes) / 1440) * 100);
+    let startMinutes = slot.startAt.getHours() * 60 + slot.startAt.getMinutes();
+    let endMinutes = slot.endAt.getHours() * 60 + slot.endAt.getMinutes();
+    if (endMinutes <= startMinutes) endMinutes = dayEndMinutes;
+
+    const clippedStart = Math.max(startMinutes, dayStartMinutes);
+    const clippedEnd = Math.min(endMinutes, dayEndMinutes);
+    if (clippedEnd <= dayStartMinutes) return { left: "0%", width: "0%" };
+
+    const range = dayEndMinutes - dayStartMinutes;
+    const left = ((clippedStart - dayStartMinutes) / range) * 100;
+    const width = Math.max(2, ((clippedEnd - clippedStart) / range) * 100);
     return { left: `${left}%`, width: `${width}%` };
   };
 
