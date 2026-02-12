@@ -33,6 +33,15 @@ type SlotInput = {
   endAt: Date;
 };
 
+const getSlotWindow = (slot: SlotInput) => {
+  const start = slot.startAt.getTime();
+  let end = slot.endAt.getTime();
+  if (end <= start) {
+    end += 24 * 60 * 60 * 1000;
+  }
+  return { start, end };
+};
+
 export async function generateScheduleAssignments(
   weekId: string,
   seed: number
@@ -135,6 +144,7 @@ export async function generateScheduleAssignments(
     const rand = mulberry32(seed + attempt * 101);
     const assignedHours = new Map<string, number>();
     const assignedDays = new Map<string, Set<string>>();
+    const assignedWindows = new Map<string, { start: number; end: number }[]>();
     const assignments: { shiftSlotId: string; userId: string }[] = [];
 
     for (const slot of sortedSlots) {
@@ -146,6 +156,14 @@ export async function generateScheduleAssignments(
           if (!isManager && currentHours + slot.hours > candidate.maxHoursWeek) {
             return false;
           }
+
+          const { start: slotStart, end: slotEnd } = getSlotWindow(slot);
+          const windows = assignedWindows.get(candidate.userId) ?? [];
+          const overlaps = windows.some(
+            (w) => slotStart < w.end && slotEnd > w.start
+          );
+          if (overlaps) return false;
+
           if (isManager) return true;
 
           const dayKey = slot.date.toISOString().slice(0, 10);
@@ -179,6 +197,10 @@ export async function generateScheduleAssignments(
       const days = assignedDays.get(choice.userId) ?? new Set<string>();
       days.add(dayKey);
       assignedDays.set(choice.userId, days);
+      const windows = assignedWindows.get(choice.userId) ?? [];
+      const { start, end } = getSlotWindow(slot);
+      windows.push({ start, end });
+      assignedWindows.set(choice.userId, windows);
     }
 
     if (assignments.length === slotsInput.length) {
