@@ -9,6 +9,7 @@ import TopBar from "@/components/TopBar";
 import PreviewHours from "./PreviewHours";
 import WeekSelector from "@/components/WeekSelector";
 import AutoSubmitSelect from "@/components/AutoSubmitSelect";
+import Link from "next/link";
 
 type AdminSchedulePageProps = {
   searchParams?: Promise<{ week?: string }>;
@@ -134,7 +135,15 @@ export default async function AdminSchedulePage({
 
         <div className="toolbar">
           <AdminScheduleActions weekId={week.id} />
-          {schedule?.generatedAt ? <PreviewHours items={hoursPreview} /> : null}
+          <div className="toolbar-actions">
+            <Link
+              className="ghost-button"
+              href={`/admin/schedule/visual?week=${weekKey(week.startDate)}`}
+            >
+              Visual
+            </Link>
+            {schedule?.generatedAt ? <PreviewHours items={hoursPreview} /> : null}
+          </div>
         </div>
 
         <section className="card">
