@@ -1,7 +1,8 @@
+# syntax=docker/dockerfile:1.5
 FROM node:20-bookworm AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm npm ci
 
 FROM node:20-bookworm AS builder
 WORKDIR /app
@@ -9,7 +10,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV DATABASE_URL=postgresql://postgres:postgres@localhost:5432/scheduler
 RUN npm run prisma:generate
-RUN npm run build
+RUN mkdir -p /app/.next/cache
+RUN --mount=type=cache,target=/app/.next/cache npm run build
 
 FROM node:20-bookworm AS runner
 WORKDIR /app
