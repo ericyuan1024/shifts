@@ -18,6 +18,8 @@ RUN --mount=type=cache,target=/app/.next/cache npm run build
 FROM node:20-bookworm AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+ARG BUILD_TIMESTAMP="unknown"
+ENV BUILD_TIMESTAMP=$BUILD_TIMESTAMP
 COPY --from=builder /app/package.json /app/package-lock.json ./
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
