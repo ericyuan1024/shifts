@@ -1,17 +1,35 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { loginAction } from "./actions";
 
 const initialState = { ok: true, message: "" };
 
 export default function LoginForm() {
   const [state, action, pending] = useActionState(loginAction, initialState);
+  const [globalPasscode, setGlobalPasscode] = useState("");
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem("globalPasscode");
+    if (saved) setGlobalPasscode(saved);
+  }, []);
+
+  const handleGlobalChange = (value: string) => {
+    setGlobalPasscode(value);
+    window.localStorage.setItem("globalPasscode", value);
+  };
 
   return (
     <form action={action} className="login-card">
       <h1>Employee Sign In</h1>
-      <p className="subtext">Enter your 4-digit passcode</p>
+      <p className="subtext">Enter the team passcode and your 4-digit code</p>
+      <input
+        name="globalPasscode"
+        type="password"
+        placeholder="Team passcode"
+        value={globalPasscode}
+        onChange={(event) => handleGlobalChange(event.target.value)}
+      />
       <input
         name="passcode"
         type="password"
