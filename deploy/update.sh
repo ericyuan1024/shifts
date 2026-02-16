@@ -14,9 +14,9 @@ if [[ ! -f .env ]]; then
   exit 1
 fi
 
-echo "Rebuilding and restarting containers..."
-DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 \
-  docker compose --env-file .env -f docker-compose.yml up -d --build
+echo "Pulling latest image and restarting containers..."
+docker compose --env-file .env -f docker-compose.yml pull app
+docker compose --env-file .env -f docker-compose.yml up -d
 
 echo "Running migrations (if any)..."
 docker compose --env-file .env -f docker-compose.yml exec -T app npm run prisma:migrate

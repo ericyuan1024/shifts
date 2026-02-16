@@ -8,6 +8,8 @@ FROM node:20-bookworm AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+ARG BUILD_TIMESTAMP="unknown"
+ENV BUILD_TIMESTAMP=$BUILD_TIMESTAMP
 ENV DATABASE_URL=postgresql://postgres:postgres@localhost:5432/scheduler
 RUN npm run prisma:generate
 RUN mkdir -p /app/.next/cache

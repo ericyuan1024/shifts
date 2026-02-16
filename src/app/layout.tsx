@@ -18,6 +18,8 @@ export const metadata: Metadata = {
   description: "Mobile-first scheduling for small teams",
 };
 
+const buildInfo = process.env.BUILD_TIMESTAMP ?? "unknown";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,7 +30,13 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} ${spaceMono.variable} antialiased`}
       >
-        {children}
+        <div className="app-shell">
+          {children}
+          <footer className="app-footer">
+            <div>opt by Kongfu Cat Ramen Bar</div>
+            <div className="app-footer-sub">build info: {buildInfo}</div>
+          </footer>
+        </div>
       </body>
     </html>
   );

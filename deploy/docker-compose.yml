@@ -1,8 +1,6 @@
 services:
   app:
-    build:
-      context: ..
-      dockerfile: deploy/Dockerfile
+    image: ghcr.io/ericyuan1024/shifts:latest
     environment:
       NODE_ENV: production
       TZ: America/Vancouver

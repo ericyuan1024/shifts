@@ -17,7 +17,9 @@ if [[ -z "$SSH_HOST" ]]; then
 fi
 
 echo "Building image..."
-DOCKER_BUILDKIT=1 docker build -f deploy/Dockerfile -t "$IMAGE" .
+BUILD_TIMESTAMP="$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+DOCKER_BUILDKIT=1 docker build -f deploy/Dockerfile -t "$IMAGE" \
+  --build-arg BUILD_TIMESTAMP="$BUILD_TIMESTAMP" .
 
 if [[ -n "$(git status --porcelain)" ]]; then
   echo "Committing changes..."
