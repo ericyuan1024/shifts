@@ -23,7 +23,7 @@ if [[ -n "$(git status --porcelain)" ]]; then
 fi
 
 echo "Pushing code..."
-git push
+git push --set-upstream origin main
 
 echo "Building and pushing image for linux/amd64..."
 BUILD_TIMESTAMP="$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
