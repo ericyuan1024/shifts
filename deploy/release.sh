@@ -16,11 +16,6 @@ if [[ -z "$SSH_HOST" ]]; then
   exit 1
 fi
 
-echo "Building image..."
-BUILD_TIMESTAMP="$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-DOCKER_BUILDKIT=1 docker build -f deploy/Dockerfile -t "$IMAGE" \
-  --build-arg BUILD_TIMESTAMP="$BUILD_TIMESTAMP" .
-
 if [[ -n "$(git status --porcelain)" ]]; then
   echo "Committing changes..."
   git add -A
@@ -30,8 +25,13 @@ fi
 echo "Pushing code..."
 git push
 
-echo "Pushing image..."
-docker push "$IMAGE"
+echo "Building and pushing image for linux/amd64..."
+BUILD_TIMESTAMP="$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+docker buildx build --platform linux/amd64 \
+  -f deploy/Dockerfile \
+  -t "$IMAGE" \
+  --build-arg BUILD_TIMESTAMP="$BUILD_TIMESTAMP" \
+  --push .
 
 echo "Updating server..."
 ssh "${SSH_USER}@${SSH_HOST}" "cd ${SSH_PATH} && ./update.sh"

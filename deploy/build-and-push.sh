@@ -6,12 +6,12 @@ cd "$ROOT_DIR/.."
 
 IMAGE="ghcr.io/ericyuan1024/shifts:latest"
 
-echo "Building image..."
+echo "Building and pushing image for linux/amd64..."
 BUILD_TIMESTAMP="$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-DOCKER_BUILDKIT=1 docker build -f deploy/Dockerfile -t "$IMAGE" \
-  --build-arg BUILD_TIMESTAMP="$BUILD_TIMESTAMP" .
-
-echo "Pushing image..."
-docker push "$IMAGE"
+docker buildx build --platform linux/amd64 \
+  -f deploy/Dockerfile \
+  -t "$IMAGE" \
+  --build-arg BUILD_TIMESTAMP="$BUILD_TIMESTAMP" \
+  --push .
 
 echo "Done: $IMAGE"
