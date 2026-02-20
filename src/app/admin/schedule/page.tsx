@@ -12,7 +12,7 @@ import AutoSubmitSelect from "@/components/AutoSubmitSelect";
 import Link from "next/link";
 
 type AdminSchedulePageProps = {
-  searchParams?: Promise<{ week?: string }>;
+  searchParams?: Promise<{ week?: string; notice?: string }>;
 };
 
 export const dynamic = "force-dynamic";
@@ -28,6 +28,7 @@ export default async function AdminSchedulePage({
   const weeks = await ensureNextThreeWeeks();
   type Week = (typeof weeks)[number];
   const selectedStart = resolvedSearchParams?.week;
+  const notice = resolvedSearchParams?.notice;
   const weekKey = (d: Date) => formatDateInTimeZone(d, "America/Vancouver");
   const week =
     weeks.find((w: Week) => weekKey(w.startDate) === selectedStart) ??
@@ -145,6 +146,7 @@ export default async function AdminSchedulePage({
             {schedule?.generatedAt ? <PreviewHours items={hoursPreview} /> : null}
           </div>
         </div>
+        {notice ? <p className="error">{notice}</p> : null}
 
         <section className="card">
           <h2>Current Schedule</h2>

@@ -5,6 +5,8 @@ import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { ensureNextTwoWeeks, ensureSlotsForWeek } from "@/lib/weeks";
 import { generateScheduleAssignments } from "@/lib/scheduler";
+import { formatDateInTimeZone } from "@/lib/date";
+import { redirect } from "next/navigation";
 
 export async function generateScheduleAction(
   _prevState: unknown,
@@ -157,7 +159,7 @@ export async function updateAssignmentAction(formData: FormData) {
   const userId = String(formData.get("userId") || "");
 
   if (!shiftSlotId || !userId) {
-    throw new Error("Missing params.");
+    return;
   }
 
   const slot = await prisma.shiftSlot.findUnique({
@@ -176,7 +178,12 @@ export async function updateAssignmentAction(formData: FormData) {
   }
 
   if (schedule.status === "FINALIZED") {
-    throw new Error("Finalized schedules cannot be edited.");
+    const weekParam = formatDateInTimeZone(slot.week.startDate, "America/Vancouver");
+    redirect(
+      `/admin/schedule?week=${weekParam}&notice=${encodeURIComponent(
+        "Reopen before any modification."
+      )}`
+    );
   }
 
   await prisma.assignment.upsert({
