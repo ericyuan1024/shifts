@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
-import { ensureNextThreeWeeks, ensureSlotsForWeek } from "@/lib/weeks";
+import { ensureSlotsForWeek } from "@/lib/weeks";
 import { prisma } from "@/lib/db";
 import { addDays, formatDateInTimeZone } from "@/lib/date";
 import AdminScheduleActions from "./AdminScheduleActions";
@@ -25,7 +25,13 @@ export default async function AdminSchedulePage({
   if (!user) redirect("/admin/login");
   if (user.role !== "ADMIN") redirect("/home");
 
-  const weeks = await ensureNextThreeWeeks();
+  const weeks = await prisma.week.findMany({
+    where: {
+      OR: [{ schedule: { isNot: null } }, { slots: { some: {} } }],
+    },
+    include: { schedule: true },
+    orderBy: { startDate: "asc" },
+  });
   type Week = (typeof weeks)[number];
   const selectedStart = resolvedSearchParams?.week;
   const notice = resolvedSearchParams?.notice;
