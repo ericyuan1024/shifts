@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { addDays, formatDateInTimeZone } from "@/lib/date";
-import { ensureNextThreeWeeks } from "@/lib/weeks";
+import { ensureSlotsForWeek } from "@/lib/weeks";
 import TopBar from "@/components/TopBar";
 import WeekSelector from "@/components/WeekSelector";
 
@@ -19,7 +19,13 @@ export default async function MyShiftsPage({ searchParams }: MyShiftsPageProps) 
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const selectedStart = resolvedSearchParams?.week;
 
-  const weeks = await ensureNextThreeWeeks();
+  const weeks = await prisma.week.findMany({
+    where: {
+      OR: [{ schedule: { isNot: null } }, { slots: { some: {} } }],
+    },
+    include: { schedule: true },
+    orderBy: { startDate: "asc" },
+  });
   type Week = (typeof weeks)[number];
   const weekKey = (d: Date) => formatDateInTimeZone(d, "America/Vancouver");
   const week =
@@ -42,6 +48,8 @@ export default async function MyShiftsPage({ searchParams }: MyShiftsPageProps) 
       </>
     );
   }
+
+  await ensureSlotsForWeek(week.id);
 
   const slots = await prisma.shiftSlot.findMany({
     where: { weekId: week.id },
