@@ -50,7 +50,13 @@ export default async function AdminSchedulePage({
 
   await ensureSlotsForWeek(week.id);
 
-  const [schedule, slots, employees, preferences, templates] = await Promise.all([
+  const employees = await prisma.user.findMany({
+    where: { role: "EMPLOYEE" },
+    include: { roleType: true },
+    orderBy: { name: "asc" },
+  });
+
+  const [schedule, slots, preferences, templates] = await Promise.all([
     prisma.schedule.findUnique({ where: { weekId: week.id } }),
     prisma.shiftSlot.findMany({
       where: { weekId: week.id },
@@ -59,11 +65,6 @@ export default async function AdminSchedulePage({
         assignment: { include: { user: true } },
       },
       orderBy: [{ date: "asc" }, { startAt: "asc" }],
-    }),
-    prisma.user.findMany({
-      where: { role: "EMPLOYEE" },
-      include: { roleType: true },
-      orderBy: { name: "asc" },
     }),
     prisma.preference.findMany({
       where: { shiftSlot: { weekId: week.id } },
