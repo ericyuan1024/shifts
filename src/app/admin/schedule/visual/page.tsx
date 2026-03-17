@@ -21,16 +21,32 @@ export default async function VisualSchedulePage({ searchParams }: VisualPagePro
   if (!user) redirect("/admin/login");
   if (user.role !== "ADMIN") redirect("/home");
 
-  const weeks = await prisma.week.findMany({
+  const rawWeeks = await prisma.week.findMany({
     where: {
       OR: [{ schedule: { isNot: null } }, { slots: { some: {} } }],
     },
-    include: { schedule: true },
+    include: { schedule: true, _count: { select: { slots: true } } },
     orderBy: { startDate: "asc" },
   });
-  type Week = (typeof weeks)[number];
+  type Week = (typeof rawWeeks)[number];
   const selectedStart = resolvedSearchParams?.week;
   const weekKey = (d: Date) => formatDateInTimeZone(d, "America/Vancouver");
+  const uniqueWeeks = new Map<string, Week>();
+  rawWeeks.forEach((w: Week) => {
+    const key = weekKey(w.startDate);
+    const existing = uniqueWeeks.get(key);
+    if (!existing) {
+      uniqueWeeks.set(key, w);
+      return;
+    }
+    const existingScore =
+      (existing._count?.slots ?? 0) + (existing.schedule ? 100000 : 0);
+    const score = (w._count?.slots ?? 0) + (w.schedule ? 100000 : 0);
+    if (score > existingScore) uniqueWeeks.set(key, w);
+  });
+  const weeks = Array.from(uniqueWeeks.values()).sort(
+    (a, b) => a.startDate.getTime() - b.startDate.getTime()
+  );
   const week =
     weeks.find((w: Week) => weekKey(w.startDate) === selectedStart) ??
     weeks[0];
