@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { ensureSlotsForWeek } from "@/lib/weeks";
 import { prisma } from "@/lib/db";
-import { addDays, formatDateInTimeZone } from "@/lib/date";
+import { addDays, formatDateInTimeZone, mondayIndex } from "@/lib/date";
 import AdminScheduleActions from "./AdminScheduleActions";
 import { updateAssignmentAction } from "./actions";
 import TopBar from "@/components/TopBar";
@@ -50,7 +50,7 @@ export default async function AdminSchedulePage({
 
   await ensureSlotsForWeek(week.id);
 
-  const [schedule, slots, employees, preferences] = await Promise.all([
+  const [schedule, slots, employees, preferences, templates] = await Promise.all([
     prisma.schedule.findUnique({ where: { weekId: week.id } }),
     prisma.shiftSlot.findMany({
       where: { weekId: week.id },
@@ -68,6 +68,17 @@ export default async function AdminSchedulePage({
     prisma.preference.findMany({
       where: { shiftSlot: { weekId: week.id } },
       select: { userId: true, shiftSlotId: true, choice: true },
+    }),
+    prisma.availabilityTemplate.findMany({
+      where: { userId: { in: employees.map((e) => e.id) } },
+      select: {
+        userId: true,
+        roleTypeId: true,
+        dayOfWeek: true,
+        startTime: true,
+        endTime: true,
+        choice: true,
+      },
     }),
   ]);
 
@@ -96,6 +107,12 @@ export default async function AdminSchedulePage({
   );
   const preferenceMap = new Map(
     preferences.map((p) => [`${p.userId}-${p.shiftSlotId}`, p.choice])
+  );
+  const templateMap = new Map(
+    templates.map((t) => [
+      `${t.userId}-${t.roleTypeId}-${t.dayOfWeek}-${t.startTime}-${t.endTime}`,
+      t.choice,
+    ])
   );
   const choiceDot = (choice: string) => (choice === "CANT" ? "🔴" : "🟢");
   const choiceLabel = (choice: string) =>
@@ -236,9 +253,15 @@ export default async function AdminSchedulePage({
                                     options={[
                                       { value: "", label: "Select employee" },
                                       ...availableEmployees.map((employee: Employee) => {
+                                        const day = mondayIndex(slot.date);
+                                        const start = slot.startAt.toTimeString().slice(0, 5);
+                                        const end = slot.endAt.toTimeString().slice(0, 5);
                                         const pref =
                                           preferenceMap.get(`${employee.id}-${slot.id}`) ??
-                                          "CAN";
+                                          templateMap.get(
+                                            `${employee.id}-${slot.roleTypeId}-${day}-${start}-${end}`
+                                          ) ??
+                                          "CANT";
                                         const label = `${choiceDot(pref)} ${employee.name} (${choiceLabel(pref)})`;
                                         return { value: employee.id, label };
                                       }),
