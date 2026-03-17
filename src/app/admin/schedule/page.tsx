@@ -283,7 +283,7 @@ export default async function AdminSchedulePage({
                                           ? "T"
                                           : "N";
                                         const pref = prefValue ?? templateValue ?? "CANT";
-                                        const dot = source === "None" ? "🟤" : choiceDot(pref);
+                                        const dot = source === "N" ? "🟤" : choiceDot(pref);
                                         const label = `${dot} ${employee.name} (${source} ${choiceLabel(
                                           pref
                                         )})`;
