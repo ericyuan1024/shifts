@@ -47,28 +47,52 @@ export default async function TemplatePage() {
   });
   type ShiftTemplate = (typeof shiftTemplates)[number];
 
-  const templates = await prisma.availabilityTemplate.findMany({
+  let templates = await prisma.availabilityTemplate.findMany({
     where: { userId: user.id },
   });
   type Template = (typeof templates)[number];
 
+  const templateKey = (t: {
+    roleTypeId: string;
+    dayOfWeek: number;
+    startTime: string;
+    endTime: string;
+  }) => `${t.roleTypeId}-${t.dayOfWeek}-${t.startTime}-${t.endTime}`;
+
+  const existingKeys = new Set(templates.map((t: Template) => templateKey(t)));
+  const missingTemplates = shiftTemplates.filter(
+    (t: ShiftTemplate) => !existingKeys.has(templateKey(t))
+  );
+
+  if (missingTemplates.length) {
+    await prisma.availabilityTemplate.createMany({
+      data: missingTemplates.map((t: ShiftTemplate) => ({
+        userId: user.id,
+        roleTypeId: t.roleTypeId,
+        dayOfWeek: t.dayOfWeek,
+        startTime: t.startTime,
+        endTime: t.endTime,
+        hours: t.hours,
+        choice: "CAN",
+      })),
+    });
+
+    templates = await prisma.availabilityTemplate.findMany({
+      where: { userId: user.id },
+    });
+  }
+
   const templateMap = new Map(
-    templates.map((t: Template) => [
-      `${t.roleTypeId}-${t.dayOfWeek}-${t.startTime}-${t.endTime}`,
-      t,
-    ])
+    templates.map((t: Template) => [templateKey(t), t])
   );
 
   const validKeys = new Set(
-    shiftTemplates.map(
-      (t: ShiftTemplate) =>
-        `${t.roleTypeId}-${t.dayOfWeek}-${t.startTime}-${t.endTime}`
-    )
+    shiftTemplates.map((t: ShiftTemplate) => templateKey(t))
   );
 
   const obsoleteTemplates = templates.filter(
     (t: Template) =>
-      !validKeys.has(`${t.roleTypeId}-${t.dayOfWeek}-${t.startTime}-${t.endTime}`)
+      !validKeys.has(templateKey(t))
   );
 
   return (
@@ -93,8 +117,7 @@ export default async function TemplatePage() {
         ) : (
           <section className="schedule-list">
             {shiftTemplates.map((slot: ShiftTemplate) => {
-              const key = `${slot.roleTypeId}-${slot.dayOfWeek}-${slot.startTime}-${slot.endTime}`;
-              const existing = templateMap.get(key);
+              const existing = templateMap.get(templateKey(slot));
               const choice = existing?.choice ?? "CAN";
 
               return (
