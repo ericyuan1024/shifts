@@ -20,6 +20,6 @@ docker compose --env-file .env -f docker-compose.yml pull app
 docker compose --env-file .env -f docker-compose.yml up -d
 
 echo "Running migrations (if any)..."
-docker compose --env-file .env -f docker-compose.yml exec -T app npm run prisma:migrate
+docker compose --env-file .env -f docker-compose.yml exec -T app npx prisma migrate deploy
 
 echo "Update complete."

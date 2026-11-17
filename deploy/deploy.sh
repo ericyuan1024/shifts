@@ -13,6 +13,6 @@ echo "Building and starting containers..."
 docker compose --env-file .env -f docker-compose.yml up -d --build
 
 echo "Running migrations..."
-docker compose --env-file .env -f docker-compose.yml exec -T app npm run prisma:migrate
+docker compose --env-file .env -f docker-compose.yml exec -T app npx prisma migrate deploy
 
 echo "Done."
