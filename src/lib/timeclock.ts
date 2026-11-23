@@ -80,6 +80,15 @@ export function formatDateTime(date: Date) {
   }).format(date);
 }
 
+export function formatShortDate(date: Date) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: TIME_ZONE,
+    month: "short",
+    day: "numeric",
+    weekday: "short",
+  }).format(date);
+}
+
 type Punch = { id: string; action: "IN" | "OUT"; shiftTime: Date };
 
 export type WorkPeriod = {

@@ -832,8 +832,20 @@ input {
 }
 
 /* ---------- Check-in (NFC) ---------- */
-.checkin-card {
+.checkin-page {
+  align-items: start;
+  padding-top: 32px;
+  padding-bottom: 48px;
+}
+
+.checkin-stack {
   width: min(440px, 100%);
+  display: grid;
+  gap: 18px;
+}
+
+.checkin-card {
+  width: 100%;
   background: var(--card);
   border-radius: calc(var(--radius) + 8px);
   padding: 28px 22px;
@@ -961,6 +973,94 @@ input {
   font-size: 40px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
+}
+
+.checkin-history-card {
+  width: 100%;
+  background: var(--card);
+  border-radius: calc(var(--radius) + 6px);
+  padding: 20px 18px;
+  border: 1px solid var(--stroke);
+  box-shadow: 0 24px 70px -45px var(--shadow);
+  display: grid;
+  gap: 14px;
+  animation: checkin-rise 0.4s ease-out;
+}
+
+.checkin-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.checkin-history-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.checkin-history-header .subtext {
+  margin-top: 2px;
+  font-size: 13px;
+}
+
+.checkin-history-total {
+  font-size: 20px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #f4efe7;
+}
+
+.checkin-history-list {
+  display: grid;
+  gap: 8px;
+}
+
+.checkin-history-row {
+  display: grid;
+  grid-template-columns: 1.1fr 1.4fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--stroke);
+  background: #fffdf9;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.checkin-history-row.is-incomplete {
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+
+.checkin-history-date {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.checkin-history-times {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+}
+
+.checkin-history-arrow {
+  opacity: 0.6;
+}
+
+.checkin-history-warn {
+  color: #b45309;
+  font-weight: 600;
+}
+
+.checkin-history-hours {
+  font-weight: 700;
+  text-align: right;
+  min-width: 54px;
 }
 
 @keyframes checkin-rise {
