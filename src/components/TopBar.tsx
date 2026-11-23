@@ -22,6 +22,7 @@ export default function TopBar({ name, role, roleLabel }: Props) {
             <Link href="/admin/schedule">Schedule</Link>
             <Link href="/admin/templates">Templates</Link>
             <Link href="/admin/users">People</Link>
+            <Link href="/admin/timeclock">Time Clock</Link>
           </nav>
         ) : (
           <nav className="topbar-links">

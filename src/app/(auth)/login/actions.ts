@@ -26,5 +26,8 @@ export async function loginAction(_prevState: unknown, formData: FormData) {
   }
 
   await createSession(user.id);
-  redirect("/home");
+  const next = String(formData.get("next") || "");
+  // Only allow same-site relative paths to avoid open redirects.
+  const safeNext = /^\/(?![/\\])/.test(next) ? next : "/home";
+  redirect(safeNext);
 }

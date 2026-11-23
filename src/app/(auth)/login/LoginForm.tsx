@@ -5,7 +5,7 @@ import { loginAction } from "./actions";
 
 const initialState = { ok: true, message: "" };
 
-export default function LoginForm() {
+export default function LoginForm({ next = "" }: { next?: string }) {
   const [state, action, pending] = useActionState(loginAction, initialState);
   const [globalPasscode, setGlobalPasscode] = useState("");
 
@@ -23,6 +23,7 @@ export default function LoginForm() {
     <form action={action} className="login-card">
       <h1>Employee Sign In</h1>
       <p className="subtext">Enter the team passcode and your 4-digit code</p>
+      <input type="hidden" name="next" value={next} />
       <input
         name="globalPasscode"
         type="password"

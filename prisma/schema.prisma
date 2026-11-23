@@ -28,6 +28,11 @@ enum AssignmentSource {
   MANUAL
 }
 
+enum ClockAction {
+  IN
+  OUT
+}
+
 model User {
   id           String       @id @default(cuid())
   name         String
@@ -43,6 +48,7 @@ model User {
   assignments  Assignment[]
   sessions     Session[]
   availabilityTemplates AvailabilityTemplate[]
+  timeClocks   TimeClock[]
 
   roleType     RoleType?    @relation(fields: [roleTypeId], references: [id], onDelete: SetNull)
 }
@@ -176,4 +182,22 @@ model Assignment {
 
   @@index([scheduleId])
   @@index([userId])
+}
+
+// NFC check-in record. shiftTime is chosen by the employee (rounded to 15 min);
+// punchedAt is server time and never editable.
+model TimeClock {
+  id        String      @id @default(cuid())
+  userId    String
+  action    ClockAction
+  shiftTime DateTime
+  punchedAt DateTime    @default(now())
+  ip        String?
+  userAgent String?
+  // Phase 2 (NTAG 424 DNA SUN): tagCounter Int?, verified Boolean
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, shiftTime])
+  @@index([shiftTime])
 }
