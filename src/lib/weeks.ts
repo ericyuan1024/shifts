@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import { addDays, startOfWeekInTimeZone } from "@/lib/date";
 
-const DEFAULT_TZ = "Etc/GMT+7";
+const DEFAULT_TZ = "America/Vancouver";
 
 export async function ensureNextTwoWeeks() {
   const today = new Date();

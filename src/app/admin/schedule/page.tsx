@@ -35,7 +35,7 @@ export default async function AdminSchedulePage({
   type Week = (typeof rawWeeks)[number];
   const selectedStart = resolvedSearchParams?.week;
   const notice = resolvedSearchParams?.notice;
-  const weekKey = (d: Date) => formatDateInTimeZone(d, "Etc/GMT+7");
+  const weekKey = (d: Date) => formatDateInTimeZone(d, "America/Vancouver");
   const uniqueWeeks = new Map<string, Week>();
   rawWeeks.forEach((w: Week) => {
     const key = weekKey(w.startDate);
@@ -145,7 +145,7 @@ export default async function AdminSchedulePage({
             <p className="subtext">
               Week of{" "}
               {new Intl.DateTimeFormat("en-US", {
-                timeZone: "Etc/GMT+7",
+                timeZone: "America/Vancouver",
                 year: "numeric",
                 month: "short",
                 day: "numeric",
@@ -161,11 +161,11 @@ export default async function AdminSchedulePage({
               const start = w.startDate;
               const end = addDays(start, 6);
               const label = `${new Intl.DateTimeFormat("en-US", {
-                timeZone: "Etc/GMT+7",
+                timeZone: "America/Vancouver",
                 month: "short",
                 day: "numeric",
               }).format(start)} - ${new Intl.DateTimeFormat("en-US", {
-                timeZone: "Etc/GMT+7",
+                timeZone: "America/Vancouver",
                 month: "short",
                 day: "numeric",
               }).format(end)}`;
