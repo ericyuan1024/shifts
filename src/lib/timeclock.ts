@@ -1,4 +1,8 @@
-export const TIME_ZONE = "America/Vancouver";
+// BC adopted permanent PDT (UTC-7). Using "Etc/GMT+7" (or "America/Dawson")
+// ensures both the client browser and the server container (even if its ICU
+// tzdata still has America/Vancouver at UTC-8 in winter) format identical
+// UTC-7 wall-clock times.
+export const TIME_ZONE = "Etc/GMT+7";
 export const QUARTER_MS = 15 * 60 * 1000;
 export const EDIT_WINDOW_MS = 60 * 60 * 1000;
 

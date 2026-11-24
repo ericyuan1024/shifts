@@ -178,7 +178,7 @@ export async function updateAssignmentAction(formData: FormData) {
   }
 
   if (schedule.status === "FINALIZED") {
-    const weekParam = formatDateInTimeZone(slot.week.startDate, "America/Vancouver");
+    const weekParam = formatDateInTimeZone(slot.week.startDate, "Etc/GMT+7");
     redirect(
       `/admin/schedule?week=${weekParam}&notice=${encodeURIComponent(
         "Reopen before any modification."

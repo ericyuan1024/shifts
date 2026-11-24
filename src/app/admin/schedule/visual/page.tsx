@@ -30,7 +30,7 @@ export default async function VisualSchedulePage({ searchParams }: VisualPagePro
   });
   type Week = (typeof rawWeeks)[number];
   const selectedStart = resolvedSearchParams?.week;
-  const weekKey = (d: Date) => formatDateInTimeZone(d, "America/Vancouver");
+  const weekKey = (d: Date) => formatDateInTimeZone(d, "Etc/GMT+7");
   const uniqueWeeks = new Map<string, Week>();
   rawWeeks.forEach((w: Week) => {
     const key = weekKey(w.startDate);
@@ -161,7 +161,7 @@ export default async function VisualSchedulePage({ searchParams }: VisualPagePro
             <p className="subtext">
               Week of{" "}
               {new Intl.DateTimeFormat("en-US", {
-                timeZone: "America/Vancouver",
+                timeZone: "Etc/GMT+7",
                 year: "numeric",
                 month: "short",
                 day: "numeric",
@@ -176,11 +176,11 @@ export default async function VisualSchedulePage({ searchParams }: VisualPagePro
                 const start = w.startDate;
                 const end = addDays(start, 6);
                 const label = `${new Intl.DateTimeFormat("en-US", {
-                  timeZone: "America/Vancouver",
+                  timeZone: "Etc/GMT+7",
                   month: "short",
                   day: "numeric",
                 }).format(start)} - ${new Intl.DateTimeFormat("en-US", {
-                  timeZone: "America/Vancouver",
+                  timeZone: "Etc/GMT+7",
                   month: "short",
                   day: "numeric",
                 }).format(end)}`;

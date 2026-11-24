@@ -27,7 +27,7 @@ export default async function MyShiftsPage({ searchParams }: MyShiftsPageProps) 
     orderBy: { startDate: "asc" },
   });
   type Week = (typeof weeks)[number];
-  const weekKey = (d: Date) => formatDateInTimeZone(d, "America/Vancouver");
+  const weekKey = (d: Date) => formatDateInTimeZone(d, "Etc/GMT+7");
   const week =
     weeks.find((w: Week) => weekKey(w.startDate) === selectedStart) ?? weeks[0];
 
@@ -96,11 +96,11 @@ export default async function MyShiftsPage({ searchParams }: MyShiftsPageProps) 
               const start = w.startDate;
               const end = addDays(start, 6);
               const label = `${new Intl.DateTimeFormat("en-US", {
-                timeZone: "America/Vancouver",
+                timeZone: "Etc/GMT+7",
                 month: "short",
                 day: "numeric",
               }).format(start)} - ${new Intl.DateTimeFormat("en-US", {
-                timeZone: "America/Vancouver",
+                timeZone: "Etc/GMT+7",
                 month: "short",
                 day: "numeric",
               }).format(end)}`;
@@ -130,11 +130,11 @@ export default async function MyShiftsPage({ searchParams }: MyShiftsPageProps) 
             {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
               const date = addDays(week.startDate, dayIndex);
               const weekDay = new Intl.DateTimeFormat("en-US", {
-                timeZone: "America/Vancouver",
+                timeZone: "Etc/GMT+7",
                 weekday: "short",
               }).format(date);
               const dateLabel = new Intl.DateTimeFormat("en-US", {
-                timeZone: "America/Vancouver",
+                timeZone: "Etc/GMT+7",
                 month: "short",
                 day: "numeric",
               }).format(date);

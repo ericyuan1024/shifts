@@ -102,6 +102,6 @@ export async function syncFromTemplateAction(formData: FormData) {
   }
 
   revalidatePath("/employee/preferences");
-  const weekParam = formatDateInTimeZone(week.startDate, "America/Vancouver");
+  const weekParam = formatDateInTimeZone(week.startDate, "Etc/GMT+7");
   redirect(`/employee/preferences?week=${weekParam}`);
 }

@@ -59,7 +59,7 @@ export default async function PreferencesPage({ searchParams }: PreferencesPageP
   const weeks = weeksAll.slice(1, 3);
   await Promise.all(weeks.map((w: Week) => ensureSlotsForWeek(w.id)));
 
-  const weekKey = (d: Date) => formatDateInTimeZone(d, "America/Vancouver");
+  const weekKey = (d: Date) => formatDateInTimeZone(d, "Etc/GMT+7");
   const week =
     weeks.find((w: Week) => weekKey(w.startDate) === selectedStart) ?? weeks[0];
 
@@ -100,11 +100,11 @@ export default async function PreferencesPage({ searchParams }: PreferencesPageP
               const start = w.startDate;
               const end = addDays(start, 6);
               const label = `${new Intl.DateTimeFormat("en-US", {
-                timeZone: "America/Vancouver",
+                timeZone: "Etc/GMT+7",
                 month: "short",
                 day: "numeric",
               }).format(start)} - ${new Intl.DateTimeFormat("en-US", {
-                timeZone: "America/Vancouver",
+                timeZone: "Etc/GMT+7",
                 month: "short",
                 day: "numeric",
               }).format(end)}`;
@@ -124,7 +124,7 @@ export default async function PreferencesPage({ searchParams }: PreferencesPageP
             <div className="week-card-header">
               <h2>
                 Week of {new Intl.DateTimeFormat("en-US", {
-                  timeZone: "America/Vancouver",
+                  timeZone: "Etc/GMT+7",
                   month: "short",
                   day: "numeric",
                 }).format(week.startDate)}
@@ -149,10 +149,10 @@ export default async function PreferencesPage({ searchParams }: PreferencesPageP
                 {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
                   const dayDate = addDays(week.startDate, dayIndex);
                   const label = `${new Intl.DateTimeFormat("en-US", {
-                    timeZone: "America/Vancouver",
+                    timeZone: "Etc/GMT+7",
                     weekday: "short",
                   }).format(dayDate)} - ${new Intl.DateTimeFormat("en-US", {
-                    timeZone: "America/Vancouver",
+                    timeZone: "Etc/GMT+7",
                     month: "short",
                     day: "numeric",
                   }).format(dayDate)}`;
