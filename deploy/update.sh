@@ -18,6 +18,7 @@ fi
 echo "Pulling latest image and restarting containers..."
 docker compose --env-file .env -f docker-compose.yml pull app
 docker compose --env-file .env -f docker-compose.yml up -d
+docker image prune -f
 
 echo "Running migrations (if any)..."
 docker compose --env-file .env -f docker-compose.yml exec -T app npx prisma migrate deploy
